@@ -3,7 +3,7 @@
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Path, Query
-
+from app.agent.api import router as agent_router
 from app.schemas import MovieRecommendations, TrendingMovies, UserRecommendations
 from app.services import mock_data
 
@@ -12,6 +12,7 @@ app = FastAPI(
     description="Week 1 prototype using mock data; Neo4j integration follows.",
     version="0.1.0",
 )
+app.include_router(agent_router)
 
 Limit = Annotated[int, Query(ge=1, le=20, description="Number of results (1–20)")]
 MovieId = Annotated[int, Path(gt=0, description="MovieLens movie ID")]
