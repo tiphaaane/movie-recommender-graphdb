@@ -1,0 +1,4 @@
+# Apolline's independently installable dependencies.
+-r requirements.txt
+neo4j>=5.25,<6
+python-dotenv>=1.0,<2
