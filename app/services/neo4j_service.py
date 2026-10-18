@@ -44,4 +44,3 @@ def close_driver() -> None:
     if get_driver.cache_info().currsize:  # pylint: disable=too-many-function-args
         get_driver().close()
         get_driver.cache_clear()
-        
