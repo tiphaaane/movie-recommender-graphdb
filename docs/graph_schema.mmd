@@ -1,0 +1,4 @@
+flowchart LR
+  U["User: userId"] -->|"RATED: rating, timestamp"| M["Movie: movieId, title, year"]
+  U -->|"TAGGED: tag, timestamp, tagId"| M
+  M -->|"IN_GENRE"| G["Genre: name"]
