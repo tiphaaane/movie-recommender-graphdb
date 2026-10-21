@@ -1,4 +1,4 @@
-# Alix's isolated ETL/test dependencies; works even before Tiphaine's PR merges.
+# Juliette's isolated ETL/test dependencies; works even before Tiphaine's PR merges.
 neo4j>=5.25,<6
 python-dotenv>=1.0,<2
 pytest>=8,<10

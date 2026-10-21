@@ -1,1 +1,1 @@
-"""MovieLens import and verification utilities owned by Alix."""
+"""MovieLens import and verification utilities owned by Juliette."""
