@@ -114,3 +114,36 @@ def test_reject_same_movie_for_explanation(client: TestClient) -> None:
     """Do not manufacture a self-recommendation explanation."""
     result = client.get("/api/agent/explain?source_movie_id=1&recommended_movie_id=1")
     assert result.status_code == 422
+
+import pytest
+from pydantic import ValidationError
+
+from app.agent.models import QueryPlan
+from app.agent.queries import UnsafeQueryError, check_question
+
+
+def test_normal_show_question_is_allowed():
+    """Ordinary requests beginning with SHOW must be accepted."""
+    check_question("Show me 5 comedy movies")
+
+
+def test_delete_question_is_rejected():
+    """Destructive database requests must be blocked."""
+    with pytest.raises(UnsafeQueryError):
+        check_question("Delete all movies")
+
+
+def test_drop_database_is_rejected():
+    """Schema-destroying commands must be blocked."""
+    with pytest.raises(UnsafeQueryError):
+        check_question("DROP DATABASE neo4j")
+
+
+def test_query_plan_rejects_unexpected_fields():
+    """LLM output must not contain arbitrary instructions."""
+    with pytest.raises(ValidationError):
+        QueryPlan.model_validate({
+            "intent": "popular_movies",
+            "limit": 5,
+            "dangerous_query": "DELETE ALL",
+        })
