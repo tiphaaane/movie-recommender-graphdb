@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
+MIN_NEIGHBORS = 3
 
 class MovieRecommender:
     """Train-rating-only collaborative recommender for development and testing."""
@@ -72,9 +73,11 @@ class MovieRecommender:
             return []
         unseen = self.matrix.loc[user_id].isna()
         ratings = self.matrix.loc[neighbors.index, unseen.index[unseen]]
+        neighbor_counts = ratings.notna().sum(axis=0)
         weighted = ratings.mul(neighbors, axis=0)
         support = ratings.notna().mul(neighbors, axis=0).sum(axis=0)
         scores = (weighted.sum(axis=0) / support.replace(0, np.nan)).dropna()
+        scores = scores[neighbor_counts.reindex(scores.index) >= MIN_NEIGHBORS]
         scores = scores.sort_values(ascending=False).head(limit)
         return [{"movie_id": int(i), "title": self.movie_title.get(i, str(i)),
                  "score": round(float(score), 4)} for i, score in scores.items()]
