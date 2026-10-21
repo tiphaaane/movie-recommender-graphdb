@@ -3,3 +3,5 @@ pytest
 pytest-cov
 pylint
 black
+
+-r requirements-recommendations.txt

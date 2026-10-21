@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class MovieSuggestion(BaseModel):
-    """A movie plus a score between zero and one."""
+    """Represent a recommended movie with a normalized score and reason."""
 
     movie_id: int = Field(gt=0)
     title: str = Field(min_length=1)
@@ -15,23 +15,23 @@ class MovieSuggestion(BaseModel):
 
 
 class MovieRecommendations(BaseModel):
-    """A list of movies similar to a requested movie."""
+    """Represent movies recommended as similar to a requested movie."""
 
     movie_id: int
     recommendations: list[MovieSuggestion]
-    data_source: Literal["mock", "neo4j"] = "mock"
+    data_source: Literal["mock", "movielens", "neo4j"] = "mock"
 
 
 class UserRecommendations(BaseModel):
-    """A list of recommended movies for a user."""
+    """Represent personalized movie recommendations for a user."""
 
     user_id: int
     recommendations: list[MovieSuggestion]
-    data_source: Literal["mock", "neo4j"] = "mock"
+    data_source: Literal["mock", "movielens", "neo4j"] = "mock"
 
 
 class TrendingMovies(BaseModel):
-    """A list of popular movies."""
+    """Represent a ranked list of popular movies."""
 
     movies: list[MovieSuggestion]
-    data_source: Literal["mock", "neo4j"] = "mock"
+    data_source: Literal["mock", "movielens", "neo4j"] = "mock"

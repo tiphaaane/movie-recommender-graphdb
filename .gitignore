@@ -221,3 +221,5 @@ __marimo__/
 
 # MovieLens dataset (local only)
 data/
+data/
+.DS_Store
