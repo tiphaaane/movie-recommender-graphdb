@@ -1,4 +1,3 @@
-
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -6,11 +5,17 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY requirements.txt requirements-agent.txt requirements-recommendations.txt requirements-neo4j.txt ./
+
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir \
+        -r requirements.txt \
+        -r requirements-agent.txt \
+        -r requirements-recommendations.txt \
+        -r requirements-neo4j.txt
 
 COPY app/ ./app/
+COPY scripts/ ./scripts/
 
 EXPOSE 8000
 
