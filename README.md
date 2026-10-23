@@ -110,7 +110,7 @@ The FastAPI application is published as a public Docker image on Docker Hub.
 
 ### Pull the image
 
-docker pull TON_IDENTIFIANT_DOCKER/movie-recommender-api:1.0
+docker pull cammetz/movie-recommender-api:1.0
 
 The image includes the Python API and its dependencies.
 
