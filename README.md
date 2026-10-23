@@ -10,17 +10,13 @@ for the Movie Recommender GraphDB project.
 
 ## Docker
 
-Build the services:
 
-```bash
-docker compose build
-```
+Build and start the services:
 
-Start the services:
-
-```bash
+```powershell
 docker compose up --build -d
 ```
+
 
 Check their status:
 
@@ -93,7 +89,7 @@ docker compose ps
 
 ### Access the services
 
-- API: http://localhost:8080
+- API health check: http://localhost:8080/health
 - Swagger documentation: http://localhost:8080/docs
 - Neo4j Browser: http://localhost:7474
 
