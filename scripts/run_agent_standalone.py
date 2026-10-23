@@ -1,5 +1,9 @@
 """Run Apolline's AI endpoints as a standalone FastAPI app."""
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from fastapi import FastAPI
 
 from app.agent.api import router as agent_router
