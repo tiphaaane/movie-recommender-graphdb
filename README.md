@@ -10,17 +10,13 @@ for the Movie Recommender GraphDB project.
 
 ## Docker
 
-Build the services:
 
-```bash
-docker compose build
-```
+Build and start the services:
 
-Start the services:
-
-```bash
+```powershell
 docker compose up --build -d
 ```
+
 
 Check their status:
 
@@ -70,3 +66,37 @@ pushes and pull requests.
 
 Configure local environment variables using `.env.example`.
 Never commit the actual `.env` file or expose credentials.
+
+## Docker Quickstart
+
+### Prerequisites
+
+- Docker Desktop installed and running.
+- A configured `.env` file based on `.env.example`.
+- The MovieLens Small dataset available in `data/ml-latest-small/`.
+
+### Start the application
+
+Build and start the services:
+
+docker compose up --build -d
+
+
+Check service status:
+
+docker compose ps
+
+
+### Access the services
+
+- API health check: http://localhost:8080/health
+- Swagger documentation: http://localhost:8080/docs
+- Neo4j Browser: http://localhost:7474
+
+### Import and verify MovieLens data
+
+docker compose exec api python -m scripts.import_movielens
+docker compose exec api python -m scripts.verify_graph
+
+
+For the complete setup, configuration, Ollama integration, health checks, and troubleshooting instructions, see [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.md).
