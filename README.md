@@ -100,3 +100,18 @@ docker compose exec api python -m scripts.verify_graph
 
 
 For the complete setup, configuration, Ollama integration, health checks, and troubleshooting instructions, see [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.md).
+
+## Public Docker Image
+
+The FastAPI application is published as a public Docker image on Docker Hub.
+
+**Docker Hub repository:**  
+[Movie Recommender API](https://hub.docker.com/r/cammetz/movie-recommender-api)
+
+### Pull the image
+
+docker pull cammetz/movie-recommender-api:1.0
+
+The image includes the Python API and its dependencies.
+
+Neo4j, Ollama, credentials, and the MovieLens dataset are managed separately. See the [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.md) for instructions on starting the complete application with Docker Compose.
