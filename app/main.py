@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException, Path as ApiPath, Query
 from neo4j.exceptions import AuthError, Neo4jError, ServiceUnavailable, SessionExpired
 
 from app.agent.api import router as agent_router
+from app.gds.api import router as gds_router
 from app.recommendations.service import MovieRecommender
 from app.schemas import MovieRecommendations, MovieSuggestion, TrendingMovies, UserRecommendations
 from app.services import mock_data, neo4j_recommendations
@@ -19,6 +20,8 @@ app = FastAPI(
     version="0.3.0",
 )
 app.include_router(agent_router)
+app.include_router(gds_router)
+
 
 Limit = Annotated[int, Query(ge=1, le=20, description="Number of results (1-20)")]
 MovieId = Annotated[int, ApiPath(gt=0, description="MovieLens movie ID")]
