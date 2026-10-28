@@ -3,12 +3,13 @@
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated, Any, Callable
+from typing import Annotated
+
 
 from fastapi import FastAPI, HTTPException, Path as ApiPath, Query
-from neo4j.exceptions import AuthError, Neo4jError, ServiceUnavailable, SessionExpired
-
+from app.services.neo4j_http import graph_call
 from app.agent.api import router as agent_router
+from app.gds.api import router as gds_router
 from app.recommendations.service import MovieRecommender
 from app.schemas import MovieRecommendations, MovieSuggestion, TrendingMovies, UserRecommendations
 from app.services import mock_data, neo4j_recommendations
@@ -19,6 +20,8 @@ app = FastAPI(
     version="0.3.0",
 )
 app.include_router(agent_router)
+app.include_router(gds_router)
+
 
 Limit = Annotated[int, Query(ge=1, le=20, description="Number of results (1-20)")]
 MovieId = Annotated[int, ApiPath(gt=0, description="MovieLens movie ID")]
@@ -45,14 +48,6 @@ def using_neo4j() -> bool:
     return selected_source() == "neo4j"
 
 
-def graph_call(handler: Callable[..., Any], *args: Any) -> Any:
-    """Convert database failures into stable HTTP errors without exposing secrets."""
-    try:
-        return handler(*args)
-    except (AuthError, ServiceUnavailable, SessionExpired, OSError, RuntimeError) as exc:
-        raise HTTPException(status_code=503, detail="Neo4j service is unavailable") from exc
-    except Neo4jError as exc:
-        raise HTTPException(status_code=502, detail="Neo4j query failed") from exc
 
 
 @lru_cache(maxsize=1)
