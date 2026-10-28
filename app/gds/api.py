@@ -1,11 +1,10 @@
 """HTTP endpoints exposing the team's Neo4j Graph Data Science algorithms."""
 
-from typing import Annotated, Any, Callable, Literal
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Path, Query
-from neo4j.exceptions import AuthError, Neo4jError, ServiceUnavailable, SessionExpired
 from pydantic import BaseModel, Field
-
+from app.services.neo4j_http import graph_call
 from app.gds import service
 from app.services import neo4j_recommendations
 
@@ -40,27 +39,19 @@ class ImportantMoviesGDS(BaseModel):
     movies: list[GDSMovie]
 
 
-def _db_call(handler: Callable[..., Any], *args: Any) -> Any:
-    """Return stable HTTP errors without exposing connection details or secrets."""
-    try:
-        return handler(*args)
-    except (AuthError, ServiceUnavailable, SessionExpired, OSError, RuntimeError) as exc:
-        raise HTTPException(status_code=503, detail="Neo4j service is unavailable") from exc
-    except Neo4jError as exc:
-        raise HTTPException(status_code=502, detail="Neo4j GDS query failed") from exc
 
 
 @router.get("/movies/{movie_id}/similar", response_model=SimilarMoviesGDS)
 def similar_movies_gds(movie_id: MovieId, limit: Limit = 5) -> SimilarMoviesGDS:
     """Find movies with an overlapping audience using GDS Node Similarity."""
-    if not _db_call(neo4j_recommendations.movie_exists, movie_id):
+    if not graph_call(neo4j_recommendations.movie_exists, movie_id):
         raise HTTPException(status_code=404, detail="Movie not found")
-    rows = _db_call(service.node_similarity, movie_id, limit)
+    rows = graph_call(service.node_similarity, movie_id, limit)
     return SimilarMoviesGDS(source_movie_id=movie_id, movies=[GDSMovie(**row) for row in rows])
 
 
 @router.get("/movies/important", response_model=ImportantMoviesGDS)
 def important_movies_gds(limit: Limit = 5) -> ImportantMoviesGDS:
     """Return the most structurally important movies using GDS PageRank."""
-    rows = _db_call(service.page_rank, limit)
+    rows = graph_call(service.page_rank, limit)
     return ImportantMoviesGDS(movies=[GDSMovie(**row) for row in rows])
