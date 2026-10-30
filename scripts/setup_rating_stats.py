@@ -36,8 +36,8 @@ DROP_QUERIES = [
 def check_graph(driver, database: str) -> None:
     """Fail clearly when MovieLens has not been imported yet."""
     record = driver.execute_query(
-        "CALL { MATCH (m:Movie) RETURN count(m) AS movies } "
-        "CALL { MATCH ()-[r:RATED]->() RETURN count(r) AS ratings } "
+        "CALL () { MATCH (m:Movie) RETURN count(m) AS movies } "
+        "CALL () { MATCH ()-[r:RATED]->() RETURN count(r) AS ratings } "
         "RETURN movies, ratings",
         database_=database,
     ).records[0]

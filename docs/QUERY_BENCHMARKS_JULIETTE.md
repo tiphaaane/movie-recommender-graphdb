@@ -138,3 +138,5 @@ they were created for future browsing and no speed-up is claimed for them.
 - One parameter set per query (movie 1, user 1). Users or movies with more ratings cost more.
 - Warm cache, single client, no concurrent load.
 - Client-side times include the driver round trip (about 2 ms floor).
+- Reproduced on a fresh database with docker compose (image neo4j:5): database hits identical for all queries except api_user_recommendations and api_discover (1,617 fewer each, about 0.1%), possibly because of a different Neo4j version; conclusions unchanged.
+- On a fresh database, benchmark_queries.py prints an UnknownPropertyKeyWarning for ratingCount: this is expected, the property is created by setup_rating_stats.py.
