@@ -5,10 +5,16 @@ For every query in QUERIES, the script:
 2. runs the plain query a few times to warm up the page cache;
 3. times N runs (wall clock, all records fetched) and reports median, min and max.
 
-Run from the repository root, with Neo4j started and .env configured:
+Full workflow, from the repository root (see docs/QUERY_BENCHMARKS_JULIETTE.md):
+    docker compose up -d neo4j                      # standard project Neo4j service
+    python -m scripts.import_movielens              # fresh MovieLens import
     python -m scripts.benchmark_queries --label before
-    python -m scripts.benchmark_queries --label after --runs 30
-Results are written to docs/benchmarks/results_<label>.md.
+    python -m scripts.setup_rating_stats            # applies the tested optimization
+    python -m scripts.benchmark_queries --label after
+
+--label only names the report (docs/benchmarks/results_<label>.md). The optimization
+itself is created by scripts/setup_rating_stats.py. Queries marked with "requires" are
+skipped, and listed as skipped in the report, until that setup has been run.
 """
 
 import argparse
@@ -194,6 +200,7 @@ LIMIT $limit
         "name": "variant_trending_precomputed",
         "source": VARIANT,
         "purpose": "Same ranking as api_trending, read from precomputed Movie properties",
+        "requires": "rating_stats",
         "cypher": """
 MATCH (m:Movie)
 WHERE m.ratingCount >= 3
@@ -268,6 +275,15 @@ def environment_info(driver, database: str) -> dict:
     return {"version": version, "movies": movies, "ratings": ratings}
 
 
+def rating_stats_ready(driver, database: str) -> bool:
+    """Return True when every movie has the precomputed rating statistics."""
+    record = driver.execute_query(
+        "MATCH (m:Movie) RETURN count(m) AS movies, count(m.ratingCount) AS with_stats",
+        database_=database,
+    ).records[0]
+    return record["movies"] > 0 and record["with_stats"] == record["movies"]
+
+
 def benchmark(driver, database: str, query: dict, runs: int, warmup: int) -> dict:
     """PROFILE a query once, then time repeated plain executions."""
     records, summary, _ = driver.execute_query(
@@ -295,7 +311,9 @@ def benchmark(driver, database: str, query: dict, runs: int, warmup: int) -> dic
     }
 
 
-def render_report(label: str, info: dict, settings: dict, results: list[dict]) -> str:
+def render_report(
+    label: str, info: dict, settings: dict, results: list[dict], skipped: list[str]
+) -> str:
     """Build the Markdown report with a summary table and one section per query."""
     lines = [
         f"# Cypher benchmark results: {label}",
@@ -318,6 +336,11 @@ def render_report(label: str, info: dict, settings: dict, results: list[dict]) -
             f"| {res['min_ms']:.2f} | {res['max_ms']:.2f} "
             f"| {'yes' if res['uses_index'] else 'no'} | {'yes' if res['full_scan'] else 'no'} |"
         )
+    if skipped:
+        lines += [
+            "",
+            f"Skipped (run `python -m scripts.setup_rating_stats` first): {', '.join(skipped)}",
+        ]
     for res in results:
         lines += [
             "",
@@ -357,8 +380,13 @@ def main() -> None:
 
     with connect() as driver:
         info = environment_info(driver, args.database)
-        results = []
+        stats_ready = rating_stats_ready(driver, args.database)
+        results, skipped = [], []
         for query in selected:
+            if query.get("requires") == "rating_stats" and not stats_ready:
+                print(f"{query['name']:<30} skipped: run python -m scripts.setup_rating_stats")
+                skipped.append(query["name"])
+                continue
             result = benchmark(driver, args.database, query, args.runs, args.warmup)
             results.append(result)
             print(
@@ -370,7 +398,7 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     output = args.output_dir / f"results_{label}.md"
     settings = {"runs": args.runs, "warmup": args.warmup}
-    output.write_text(render_report(label, info, settings, results), encoding="utf-8")
+    output.write_text(render_report(label, info, settings, results, skipped), encoding="utf-8")
     print(f"Report written to {output}")
 
 

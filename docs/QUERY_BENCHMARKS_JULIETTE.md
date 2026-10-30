@@ -6,7 +6,7 @@ inventing gains.
 
 ## 1. Method
 
-- Environment: Neo4j 5.26 Community with Graph Data Science 2.13.14, Docker, MacBook Air (Apple M1).
+- Environment of the published measurements: Neo4j 5.26 Community in Docker on a MacBook Air (Apple M1). GDS is not needed for these benchmarks.
 - Data: MovieLens Small (9,742 movies, 610 users, 100,836 ratings), imported with `scripts/import_movielens.py`.
 - Queries: copied from `app/services/neo4j_recommendations.py` (API) and `app/agent/queries.py` (AI assistant), plus clearly labelled variants used only for comparison.
 - Parameters: movie 1 (Toy Story), user 1, genre Comedy, limit 10.
@@ -15,13 +15,29 @@ inventing gains.
   - 3 warm-up runs, then 20 timed runs; median, min and max wall-clock time on the client side (Python driver, all records fetched).
 - Database hits are deterministic and are the main metric. Times are indicative only (see Limitations).
 
-Reproduce:
+Reproduce from a fresh database, from the repository root, with the standard project setup:
 
 ```bash
-docker start juliette-neo4j-gds
+# 1. Start the project's Neo4j service and import MovieLens (data in data/ml-latest-small/)
+docker compose up -d neo4j
+python -m scripts.import_movielens
+python -m scripts.verify_graph
+
+# 2. Baseline: the current application queries
+#    (the optimized variant is skipped because its properties do not exist yet)
 python -m scripts.benchmark_queries --label before
+
+# 3. Apply the tested optimization (section 4), then measure again
+python -m scripts.setup_rating_stats
 python -m scripts.benchmark_queries --label after
+
+# Optional: remove the optimization to return to the baseline graph
+python -m scripts.setup_rating_stats --drop
 ```
+
+`--label` only names the report. The optimization is created by
+`scripts/setup_rating_stats.py`, which is idempotent and checks that the optimized query
+returns exactly the same rows as the current API query before the "after" run.
 
 Raw reports: `docs/benchmarks/results_before.md` and `docs/benchmarks/results_after.md`.
 
@@ -70,6 +86,8 @@ Their cost comes from the number of paths, not from a missing index.
 Idea: store `ratingCount` and `averageRating` on each `Movie` once, and index `ratingCount`,
 instead of recomputing them from all ratings at every request (denormalization).
 
+The setup is scripted in `scripts/setup_rating_stats.py` (`--drop` removes it). It runs:
+
 ```cypher
 MATCH (m:Movie)
 OPTIONAL MATCH (m)<-[r:RATED]-(:User)
@@ -87,9 +105,9 @@ Same run (`results_after.md`):
 | variant_trending_precomputed | 44 | 2.51 |
 
 - Database hits divided by about 7,000; median time divided by about 15.
-- Correctness: both queries return the same 10 movies in the same order with the same values (screenshots trending_current.png and trending_precomputed.png in docs/screenshots/).
+- Correctness: both queries return the same rows in the same order with the same values. This is checked automatically by `scripts/setup_rating_stats.py` (first 50 rows) and shown in `docs/screenshots/trending_current.png` and `trending_precomputed.png`.
 - Trade-off: the two properties must be recomputed when ratings change. MovieLens Small is static here, so recomputing them at import time is enough.
-- Status: proposal. Adopting it needs the precomputation in the importer and a query change in the API (`trending`) and the AI templates (`popular_movies`), to be agreed with Tiphaine and Apolline.
+- Status: proposal. Adopting it in production needs the precomputation in the import pipeline and a query change in the API (`trending`) and the AI templates (`popular_movies`), to be agreed with Tiphaine and Apolline.
 
 ## 5. Variant tested without gain: exact genre name
 
