@@ -4,6 +4,8 @@
 **Branch:** `feature/agent-integration-apolline`
 **Scope:** natural-language interface that turns user questions into safe, validated Neo4j queries and returns structured, graph-grounded answers.
 
+> **Final evaluation:** the results on the real MovieLens graph, the title-based questions and the GDS-consistent explanations are documented in [`docs/AI_EVALUATION.md`](AI_EVALUATION.md). Section 6 below covers the earlier synthetic-graph tests.
+
 > **Note:** all results in this document were obtained on a small **synthetic demo graph** created by `scripts/seed_agent_demo.py` (a few movies, genres and ratings), **not** on the full MovieLens database. The tests will be repeated once the real MovieLens graph is imported.
 
 ---
