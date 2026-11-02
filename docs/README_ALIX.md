@@ -142,3 +142,6 @@ whether people liked the movie.
   indicative only.
 - GDS Community edition limits concurrency; this is not a problem at
   MovieLens Small size.
+
+
+For the full comparison of the Python recommender with GDS Node Similarity and PageRank, see `docs/GDS_EVALUATION.md`.
