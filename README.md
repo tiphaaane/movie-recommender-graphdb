@@ -115,3 +115,28 @@ docker pull cammetz/movie-recommender-api:1.0
 The image includes the Python API and its dependencies.
 
 Neo4j, Ollama, credentials, and the MovieLens dataset are managed separately. See the [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.md) for instructions on starting the complete application with Docker Compose.
+
+## System Architecture
+
+Our application uses Nginx as a reverse proxy for FastAPI,
+which connects to Neo4j for graph queries and GDS algorithms.
+The AI assistant uses Ollama for constrained natural-language
+interpretation.
+
+[View the system architecture diagram](docs/SYSTEM_ARCHITECTURE.md)
+
+## Modeling Appendix — AI Baseline Comparison
+
+A generic AI-generated graph schema might include User,
+Movie, Genre and Tag nodes, with relationships such as
+RATED, LIKES_GENRE, HAS_GENRE and HAS_TAG.
+
+Our MovieLens graph instead uses User, Movie and Genre
+nodes with RATED, TAGGED and IN_GENRE relationships.
+
+We model TAGGED as a user-to-movie interaction because
+the dataset records who created each tag and when.
+We do not add explicit user genre preferences because
+those are not directly present in the source data.
+
+[Read the complete modeling comparison](docs/MODELING_DECISIONS_AND_AI_BASELINE.md)
