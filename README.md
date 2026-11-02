@@ -229,3 +229,23 @@ docker pull cammetz/movie-recommender-api:1.0
 The image includes the Python API and its dependencies.
 
 Neo4j, Ollama, credentials, and the MovieLens dataset are managed separately. See the [Docker Deployment Guide](docs/DOCKER_DEPLOYMENT.md) for instructions on starting the complete application with Docker Compose.
+
+## System Architecture
+
+Our application uses Nginx as a reverse proxy for FastAPI,
+which connects to Neo4j for graph queries and GDS algorithms.
+The AI assistant uses Ollama for constrained natural-language
+interpretation.
+
+[View the system architecture diagram](docs/SYSTEM_ARCHITECTURE.md)
+
+## Modeling Appendix — AI Baseline Comparison
+
+We generated an independent baseline using ChatGPT from a generic movie-recommendation prompt. Both the generated baseline and our implemented graph use User, Movie and Genre nodes, RATED {rating, timestamp} relationships and Movie-[:IN_GENRE]->Genre.
+
+The main modeling difference concerns free-text tags:
+- AI-generated baseline: User-[:TAGGED {timestamp}]->Tag-[:TAG_OF]->Movie, with an additional Tag node.
+- Our MovieLens implementation: User-[:TAGGED {tag, timestamp, tagId}]->Movie, representing the user-to-movie tagging interaction directly.
+We chose relationship properties for tags because the MovieLens data records who tagged each movie, the text of the tag and when it was submitted. This avoids introducing a Tag node and another traversal that our current queries do not require. The two models also share several sensible choices; the comparison is not presented as if every element were different.
+
+[See the verbatim AI baseline, generation date, model information, and full modeling comparison](docs/MODELING_DECISIONS_AND_AI_BASELINE.md).
