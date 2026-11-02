@@ -171,6 +171,12 @@ make lint
 The test coverage target is at least 60%, and the Pylint
 score target is at least 9.5/10.
 
+Latest validation results:
+
+- Tests: 127 passed.
+- Test coverage: 89.60%.
+- Pylint score: 10.00/10.
+
 ## Continuous Integration
 
 GitHub Actions runs the test and lint commands for relevant
