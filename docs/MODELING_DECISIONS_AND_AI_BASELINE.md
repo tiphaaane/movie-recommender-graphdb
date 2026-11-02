@@ -12,7 +12,7 @@ flowchart LR
     M["Movie<br/>movieId · title · year<br/>ratingCount · averageRating (derived)"]
     G["Genre<br/>name"]
     U -->|"RATED<br/>rating · timestamp"| M
-    U -->|"TAGGED<br/>tag · timestamp"| M
+    U -->|"TAGGED<br/>tag · timestamp · tagId"| M
     M -->|"IN_GENRE"| G
 ```
 
@@ -20,33 +20,52 @@ The full-import graph used for validation contains approximately 9,742 Movie nod
 
 ## AI-generated generic baseline (comparison)
 
-**Prompt used to produce this illustrative baseline:**
+**Model used:** [ChatGPT]
+
+**Date of generation:** 2 November 2026 (update if generated on another date).
+
+**Prompt (verbatim):**
 
 > Propose a basic Neo4j graph schema for a movie recommendation application using user ratings, genres and free-text tags. Do not assume any specific CSV schema or constraints.
 
-A generic model from that short prompt could reasonably look like this:
+**AI response (verbatim, plain-text diagram):**
 
-```mermaid
-flowchart LR
-    U["User"] -->|"RATED"| M["Movie"]
-    U -->|"LIKES_GENRE"| G["Genre"]
-    M -->|"HAS_GENRE"| G
-    M -->|"HAS_TAG"| T["Tag"]
+```text
+(:User)
+   |
+   | [:RATED {rating, timestamp}]
+   v
+(:Movie)
+   |
+   | [:IN_GENRE]
+   v
+(:Genre)
+
+(:User)
+   |
+   | [:TAGGED {timestamp}]
+   v
+(:Tag)
+   |
+   | [:TAG_OF]
+   v
+(:Movie)
 ```
 
-This baseline is intentionally **illustrative and AI-generated for comparison**; it is not an additional schema deployed in Neo4j or a claim that every AI model produces the same structure. It does not incorporate the actual MovieLens CSV semantics.
+This is the actual AI-generated baseline, reproduced without altering its nodes, relationships, or properties. It was generated from the generic prompt above, without providing the actual MovieLens CSV structure. It is **not** the schema implemented in Neo4j.
 
 ## Why our graph differs
 
-| Design choice | Generic baseline | Implemented MovieLens graph | Reason |
+| Design choice | Actual AI-generated baseline | Implemented MovieLens graph | Rationale |
 |---|---|---|---|
-| Genre preferences | `User-[:LIKES_GENRE]->Genre` | Not stored as a direct fact | MovieLens Small has ratings, not explicit declarations that a user likes a genre. Preferences can be inferred without inventing data. |
-| Genre membership | `Movie-[:HAS_GENRE]->Genre` | `Movie-[:IN_GENRE]->Genre` | Genres are reusable nodes so queries can traverse from a Movie through a Genre to other Movies. The chosen relation name describes membership. |
-| Free-text tags | `Movie-[:HAS_TAG]->Tag` with Tag as a separate node | `User-[:TAGGED {tag, timestamp}]->Movie` | The source is a *user tagging event* with actor, target and timestamp. Modeling only a movie-to-tag edge would lose who supplied it. |
-| Rating | `User-[:RATED]->Movie` with unspecified properties | `RATED` stores rating and timestamp | The strength and time of feedback belong to the user–movie interaction, not the User or Movie alone. |
-| Unique identity | Unspecified | `User.userId`, `Movie.movieId`, `Genre.name` constraints/indexes | Stable source identifiers support idempotent ETL and indexed lookup. |
-| Extra actors, directors or social edges | May be imagined in generic recommenders | Not modeled | The supplied MovieLens Small CSVs do not provide cast or friendship data. Missing data must not be invented. |
-| Average rating | Could be computed each time or treated as a primary movie attribute | Derived `ratingCount` and `averageRating` cached on Movie, backed by `RATED` | The cache accelerates Trending queries; it is not the source of truth and must be refreshed when ratings change. |
+| Node labels | `User`, `Movie`, `Genre`, `Tag` | `User`, `Movie`, `Genre` | The dataset contains free-text tags submitted by users; a separate `Tag` node is not needed for our current recommendation queries. |
+| Tagging event | `User-[:TAGGED {timestamp}]->Tag-[:TAG_OF]->Movie` | `User-[:TAGGED {tag, timestamp, tagId}]->Movie` | The actual CSV records the user, the movie, the tag text, and its timestamp. Keeping the tag on the user-to-movie interaction preserves who tagged which movie without adding a separate node and extra traversal. `tagId` is also stored in the implemented relationship. |
+| Genre membership | `Movie-[:IN_GENRE]->Genre` | `Movie-[:IN_GENRE]->Genre` | This is a **similarity**, not a difference: both use reusable Genre nodes. Our implementation also has unique-identity constraints for genres. |
+| Rating interaction | `User-[:RATED {rating, timestamp}]->Movie` | `User-[:RATED {rating, timestamp}]->Movie` | Another **similarity**: rating value and time correctly belong to the interaction. Our ETL additionally uses stable source IDs and constraints. |
+| Identity and indexes | Not specified in the baseline diagram | Unique keys/constraints for `Movie.movieId`, `User.userId`, and `Genre.name` | These make imports idempotent and support efficient indexed lookups. We should not claim the generic baseline explicitly rejected indexes; it simply did not specify them. |
+| Derived movie statistics | Not specified in the baseline diagram | `Movie.ratingCount` and `Movie.averageRating` derived from `RATED` | Cached statistics speed up Trending queries. They are derived values, not new source facts, and must be refreshed if ratings change. |
+
+The key design difference is the handling of tags. The AI baseline chooses an independent `Tag` node plus `TAG_OF`; our graph represents tagging directly as a **user–movie relationship** with properties. Both choices can be valid, but the latter more closely matches the supplied MovieLens interaction records and our query requirements. We retain and openly acknowledge the similarities in the two models.
 
 ## Why Neo4j fits the recommendation problem
 
