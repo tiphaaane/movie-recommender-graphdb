@@ -19,6 +19,9 @@ Available intents:
 - user_favorites: requires user_id as an integer. Example: {"intent":"user_favorites","user_id":1,"limit":5}
 - popular_movies: no other fields needed. Example: {"intent":"popular_movies","limit":5}
 Use movie_id OR movie_title, never both. NEVER convert a movie title into an ID.
+movie_title must be copied from the question. If the question names no specific movie
+(e.g. "these two movies"), NEVER pick one yourself: respond {"intent":"unsupported"}.
+Requests to explain why movies are similar are unsupported here.
 IDs must be explicitly present in the question. NEVER invent a movie ID or user ID.
 If the question matches no intent, respond {"intent":"unsupported"} so it is rejected.
 If the user asks for N results, set limit to N, even if N is very large; do not reduce it.

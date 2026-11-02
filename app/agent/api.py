@@ -7,8 +7,10 @@ from app.agent.llm import InvalidPlanError, OllamaPlanner, PlannerUnavailableErr
 from app.agent.models import AskRequest, AskResponse, ExplanationResponse, QueryPreview
 from app.agent.queries import (
     EXPLAIN_RECOMMENDATION,
+    UngroundedPlanError,
     UnsafeQueryError,
     build_query,
+    check_plan_grounded,
     check_question,
 )
 
@@ -29,8 +31,10 @@ def plan_question(question: str, planner: OllamaPlanner) -> QueryPreview:
     """Filter the input, validate the model response, and build allow-listed Cypher."""
     try:
         check_question(question)
-        return build_query(planner.plan(question))
-    except (UnsafeQueryError, InvalidPlanError) as exc:
+        plan = planner.plan(question)
+        check_plan_grounded(question, plan)
+        return build_query(plan)
+    except (UnsafeQueryError, InvalidPlanError, UngroundedPlanError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except PlannerUnavailableError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc

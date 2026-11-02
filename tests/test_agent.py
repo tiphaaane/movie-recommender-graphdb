@@ -17,7 +17,15 @@ from app.agent.api import get_graph_reader, get_planner, router
 from app.agent.database import GraphUnavailableError, Neo4jReader
 from app.agent.llm import InvalidPlanError, OllamaPlanner, PlannerUnavailableError
 from app.agent.models import QueryPlan
-from app.agent.queries import TEMPLATES, UnsafeQueryError, build_query, check_question, title_variants
+from app.agent.queries import (
+    TEMPLATES,
+    UngroundedPlanError,
+    UnsafeQueryError,
+    build_query,
+    check_plan_grounded,
+    check_question,
+    title_variants,
+)
 
 
 EXPLAIN_ROW = {
@@ -195,6 +203,47 @@ def test_query_plan_rejects_unexpected_fields() -> None:
     """LLM output must not contain arbitrary instructions."""
     with pytest.raises(ValidationError):
         QueryPlan.model_validate({"intent": "popular_movies", "limit": 5, "dangerous_query": "DELETE ALL"})
+
+
+# --- Hallucination guard: references must come from the question ----------------------
+
+@pytest.mark.parametrize("question, plan", [
+    # Observed live: the model invented this title for a question naming no movie.
+    ("Explain why these two movies are similar", {"intent": "movies_like", "movie_title": "The Dark Knight"}),
+    ("Find movies similar to Toy Story", {"intent": "movies_like", "movie_title": "Jumanji"}),
+    ("Find movies similar to Toy Story", {"intent": "movies_like", "movie_id": 1}),
+    ("Recommend something for me", {"intent": "user_favorites", "user_id": 1}),
+    ("Find movies similar to movie 12", {"intent": "movies_like", "movie_id": 1}),
+])
+def test_hallucinated_reference_rejected(question: str, plan: dict) -> None:
+    """A title or ID absent from the question is refused, whatever the model says."""
+    with pytest.raises(UngroundedPlanError):
+        check_plan_grounded(question, QueryPlan.model_validate(plan))
+
+
+@pytest.mark.parametrize("question, plan", [
+    ("Find movies similar to Toy Story", {"intent": "movies_like", "movie_title": "Toy Story"}),
+    ("find movies like toy story!", {"intent": "movies_like", "movie_title": "Toy Story"}),
+    ("Movies like 'Toy Story'?", {"intent": "movies_like", "movie_title": "Toy Story (1995)"}),
+    ("Find movies similar to The Matrix", {"intent": "movies_like", "movie_title": "The Matrix"}),
+    ("Find movies similar to movie 1", {"intent": "movies_like", "movie_id": 1}),
+    ("What are user 1's favorite movies?", {"intent": "user_favorites", "user_id": 1}),
+    ("Show me 5 comedy movies", {"intent": "movies_by_genre", "genre": "Comedy"}),
+    ("What are the 10 most popular movies?", {"intent": "popular_movies", "limit": 10}),
+])
+def test_grounded_reference_accepted(question: str, plan: dict) -> None:
+    """References actually present in the question pass the check."""
+    check_plan_grounded(question, QueryPlan.model_validate(plan))
+
+
+def test_hallucinated_title_returns_422(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The live R5 failure is now refused over HTTP before Neo4j is queried."""
+    monkeypatch.setattr(FakePlanner, "plan_to_return",
+                        QueryPlan(intent="movies_like", movie_title="The Dark Knight", limit=5))
+    with make_client(reader=DownReader) as test_client:
+        result = test_client.post("/api/agent/ask", json={"question": "Explain why these two movies are similar"})
+    assert result.status_code == 422
+    assert "not mentioned in the question" in result.json()["detail"]
 
 
 # --- Allow-listed Cypher templates -----------------------------------------------------

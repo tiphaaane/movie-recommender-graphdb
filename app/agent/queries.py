@@ -82,6 +82,36 @@ def check_question(question: str) -> None:
         raise UnsafeQueryError("The assistant only answers read-only movie questions")
 
 
+class UngroundedPlanError(ValueError):
+    """The LLM referenced a movie title or ID that the user never mentioned."""
+
+
+def _normalize(text: str) -> str:
+    """Lower-case, drop punctuation and collapse spaces, padded for whole-word matching."""
+    return " " + " ".join(re.sub(r"[^\w]+", " ", text.lower()).split()) + " "
+
+
+def check_plan_grounded(question: str, plan: QueryPlan) -> None:
+    """Reject hallucinated references: every title or ID must appear in the question.
+
+    The live evaluation showed the model inventing 'The Dark Knight' for a question
+    that named no movie. This check does not trust the model at all.
+    """
+    if plan.movie_title is not None:
+        title = re.sub(r"\s*\(\d{4}\)\s*$", "", plan.movie_title)
+        if _normalize(title) not in _normalize(question):
+            raise UngroundedPlanError(
+                f"The movie '{plan.movie_title}' is not mentioned in the question; "
+                "please name the movie you mean"
+            )
+    for field in ("movie_id", "user_id"):
+        value = getattr(plan, field)
+        if value is not None and not re.search(rf"(?<!\d){value}(?!\d)", question):
+            raise UngroundedPlanError(
+                f"The {field.replace('_', ' ')} {value} is not mentioned in the question"
+            )
+
+
 ARTICLES = ("the", "a", "an")
 
 
