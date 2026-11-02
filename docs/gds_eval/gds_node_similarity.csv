@@ -1,0 +1,101 @@
+movie_id,movie,similar_id,similar_movie,score
+1,Toy Story (1995),780,Independence Day (a.k.a. ID4) (1996),0.4136
+1,Toy Story (1995),480,Jurassic Park (1993),0.4112
+1,Toy Story (1995),260,Star Wars: Episode IV - A New Hope (1977),0.4036
+1,Toy Story (1995),356,Forrest Gump (1994),0.3949
+1,Toy Story (1995),1210,Star Wars: Episode VI - Return of the Jedi (1983),0.3932
+1,Toy Story (1995),648,Mission: Impossible (1996),0.3911
+1,Toy Story (1995),364,"Lion King, The (1994)",0.3821
+1,Toy Story (1995),1270,Back to the Future (1985),0.3786
+1,Toy Story (1995),1580,Men in Black (a.k.a. MIB) (1997),0.3718
+1,Toy Story (1995),1265,Groundhog Day (1993),0.3716
+260,Star Wars: Episode IV - A New Hope (1977),1196,Star Wars: Episode V - The Empire Strikes Back (1980),0.6985
+260,Star Wars: Episode IV - A New Hope (1977),1210,Star Wars: Episode VI - Return of the Jedi (1983),0.6434
+260,Star Wars: Episode IV - A New Hope (1977),1198,Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981),0.5445
+260,Star Wars: Episode IV - A New Hope (1977),2571,"Matrix, The (1999)",0.5289
+260,Star Wars: Episode IV - A New Hope (1977),1291,Indiana Jones and the Last Crusade (1989),0.4481
+260,Star Wars: Episode IV - A New Hope (1977),780,Independence Day (a.k.a. ID4) (1996),0.4381
+260,Star Wars: Episode IV - A New Hope (1977),1270,Back to the Future (1985),0.4354
+260,Star Wars: Episode IV - A New Hope (1977),2628,Star Wars: Episode I - The Phantom Menace (1999),0.4322
+260,Star Wars: Episode IV - A New Hope (1977),858,"Godfather, The (1972)",0.4244
+260,Star Wars: Episode IV - A New Hope (1977),2028,Saving Private Ryan (1998),0.4207
+296,Pulp Fiction (1994),356,Forrest Gump (1994),0.5665
+296,Pulp Fiction (1994),318,"Shawshank Redemption, The (1994)",0.5522
+296,Pulp Fiction (1994),593,"Silence of the Lambs, The (1991)",0.5462
+296,Pulp Fiction (1994),47,Seven (a.k.a. Se7en) (1995),0.5179
+296,Pulp Fiction (1994),110,Braveheart (1995),0.4863
+296,Pulp Fiction (1994),480,Jurassic Park (1993),0.4651
+296,Pulp Fiction (1994),50,"Usual Suspects, The (1995)",0.4642
+296,Pulp Fiction (1994),589,Terminator 2: Judgment Day (1991),0.4508
+296,Pulp Fiction (1994),2571,"Matrix, The (1999)",0.4373
+296,Pulp Fiction (1994),592,Batman (1989),0.4335
+318,"Shawshank Redemption, The (1994)",356,Forrest Gump (1994),0.5566
+318,"Shawshank Redemption, The (1994)",296,Pulp Fiction (1994),0.5522
+318,"Shawshank Redemption, The (1994)",593,"Silence of the Lambs, The (1991)",0.5013
+318,"Shawshank Redemption, The (1994)",50,"Usual Suspects, The (1995)",0.4553
+318,"Shawshank Redemption, The (1994)",527,Schindler's List (1993),0.4435
+318,"Shawshank Redemption, The (1994)",2571,"Matrix, The (1999)",0.4372
+318,"Shawshank Redemption, The (1994)",2959,Fight Club (1999),0.4343
+318,"Shawshank Redemption, The (1994)",110,Braveheart (1995),0.4315
+318,"Shawshank Redemption, The (1994)",150,Apollo 13 (1995),0.4114
+318,"Shawshank Redemption, The (1994)",47,Seven (a.k.a. Se7en) (1995),0.4016
+356,Forrest Gump (1994),296,Pulp Fiction (1994),0.5665
+356,Forrest Gump (1994),318,"Shawshank Redemption, The (1994)",0.5566
+356,Forrest Gump (1994),480,Jurassic Park (1993),0.5366
+356,Forrest Gump (1994),593,"Silence of the Lambs, The (1991)",0.4866
+356,Forrest Gump (1994),110,Braveheart (1995),0.4778
+356,Forrest Gump (1994),2571,"Matrix, The (1999)",0.4697
+356,Forrest Gump (1994),150,Apollo 13 (1995),0.4521
+356,Forrest Gump (1994),589,Terminator 2: Judgment Day (1991),0.4439
+356,Forrest Gump (1994),47,Seven (a.k.a. Se7en) (1995),0.4301
+356,Forrest Gump (1994),527,Schindler's List (1993),0.426
+364,"Lion King, The (1994)",588,Aladdin (1992),0.557
+364,"Lion King, The (1994)",595,Beauty and the Beast (1991),0.5437
+364,"Lion King, The (1994)",367,"Mask, The (1994)",0.5092
+364,"Lion King, The (1994)",500,Mrs. Doubtfire (1993),0.4906
+364,"Lion King, The (1994)",480,Jurassic Park (1993),0.4539
+364,"Lion King, The (1994)",344,Ace Ventura: Pet Detective (1994),0.4292
+364,"Lion King, The (1994)",34,Babe (1995),0.4218
+364,"Lion King, The (1994)",586,Home Alone (1990),0.4118
+364,"Lion King, The (1994)",2,Jumanji (1995),0.41
+364,"Lion King, The (1994)",597,Pretty Woman (1990),0.4083
+480,Jurassic Park (1993),589,Terminator 2: Judgment Day (1991),0.5661
+480,Jurassic Park (1993),356,Forrest Gump (1994),0.5366
+480,Jurassic Park (1993),110,Braveheart (1995),0.5127
+480,Jurassic Park (1993),457,"Fugitive, The (1993)",0.507
+480,Jurassic Park (1993),377,Speed (1994),0.5037
+480,Jurassic Park (1993),592,Batman (1989),0.4878
+480,Jurassic Park (1993),780,Independence Day (a.k.a. ID4) (1996),0.4865
+480,Jurassic Park (1993),296,Pulp Fiction (1994),0.4651
+480,Jurassic Park (1993),367,"Mask, The (1994)",0.463
+480,Jurassic Park (1993),150,Apollo 13 (1995),0.4585
+1270,Back to the Future (1985),1210,Star Wars: Episode VI - Return of the Jedi (1983),0.5041
+1270,Back to the Future (1985),1196,Star Wars: Episode V - The Empire Strikes Back (1980),0.4692
+1270,Back to the Future (1985),1291,Indiana Jones and the Last Crusade (1989),0.4601
+1270,Back to the Future (1985),1198,Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981),0.4549
+1270,Back to the Future (1985),2716,Ghostbusters (a.k.a. Ghost Busters) (1984),0.4478
+1270,Back to the Future (1985),1265,Groundhog Day (1993),0.447
+1270,Back to the Future (1985),2011,Back to the Future Part II (1989),0.4413
+1270,Back to the Future (1985),1240,"Terminator, The (1984)",0.4381
+1270,Back to the Future (1985),1097,E.T. the Extra-Terrestrial (1982),0.4363
+1270,Back to the Future (1985),1580,Men in Black (a.k.a. MIB) (1997),0.4359
+2571,"Matrix, The (1999)",2959,Fight Club (1999),0.5696
+2571,"Matrix, The (1999)",1196,Star Wars: Episode V - The Empire Strikes Back (1980),0.5475
+2571,"Matrix, The (1999)",260,Star Wars: Episode IV - A New Hope (1977),0.5289
+2571,"Matrix, The (1999)",2028,Saving Private Ryan (1998),0.5032
+2571,"Matrix, The (1999)",2762,"Sixth Sense, The (1999)",0.4984
+2571,"Matrix, The (1999)",4993,"Lord of the Rings: The Fellowship of the Ring, The (2001)",0.4922
+2571,"Matrix, The (1999)",1210,Star Wars: Episode VI - Return of the Jedi (1983),0.4813
+2571,"Matrix, The (1999)",1198,Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981),0.4753
+2571,"Matrix, The (1999)",5952,"Lord of the Rings: The Two Towers, The (2002)",0.47
+2571,"Matrix, The (1999)",7153,"Lord of the Rings: The Return of the King, The (2003)",0.4698
+2959,Fight Club (1999),2571,"Matrix, The (1999)",0.5696
+2959,Fight Club (1999),4993,"Lord of the Rings: The Fellowship of the Ring, The (2001)",0.491
+2959,Fight Club (1999),4226,Memento (2000),0.4843
+2959,Fight Club (1999),7153,"Lord of the Rings: The Return of the King, The (2003)",0.4762
+2959,Fight Club (1999),2762,"Sixth Sense, The (1999)",0.4758
+2959,Fight Club (1999),2858,American Beauty (1999),0.4653
+2959,Fight Club (1999),5952,"Lord of the Rings: The Two Towers, The (2002)",0.4552
+2959,Fight Club (1999),6874,Kill Bill: Vol. 1 (2003),0.4481
+2959,Fight Club (1999),2329,American History X (1998),0.4458
+2959,Fight Club (1999),3578,Gladiator (2000),0.437
