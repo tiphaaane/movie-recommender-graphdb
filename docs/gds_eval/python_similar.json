@@ -1,0 +1,522 @@
+{
+  "1": [
+    {
+      "movie_id": 3114,
+      "title": "Toy Story 2 (1999)",
+      "score": 0.6224
+    },
+    {
+      "movie_id": 8961,
+      "title": "Incredibles, The (2004)",
+      "score": 0.5694
+    },
+    {
+      "movie_id": 588,
+      "title": "Aladdin (1992)",
+      "score": 0.5596
+    },
+    {
+      "movie_id": 6377,
+      "title": "Finding Nemo (2003)",
+      "score": 0.5549
+    },
+    {
+      "movie_id": 55269,
+      "title": "Darjeeling Limited, The (2007)",
+      "score": 0.5068
+    },
+    {
+      "movie_id": 2699,
+      "title": "Arachnophobia (1990)",
+      "score": 0.4893
+    },
+    {
+      "movie_id": 3408,
+      "title": "Erin Brockovich (2000)",
+      "score": 0.4784
+    },
+    {
+      "movie_id": 1148,
+      "title": "Wallace & Gromit: The Wrong Trousers (1993)",
+      "score": 0.4717
+    },
+    {
+      "movie_id": 78499,
+      "title": "Toy Story 3 (2010)",
+      "score": 0.4705
+    },
+    {
+      "movie_id": 317,
+      "title": "Santa Clause, The (1994)",
+      "score": 0.4698
+    }
+  ],
+  "296": [
+    {
+      "movie_id": 2959,
+      "title": "Fight Club (1999)",
+      "score": 0.5111
+    },
+    {
+      "movie_id": 2019,
+      "title": "Seven Samurai (Shichinin no samurai) (1954)",
+      "score": 0.5046
+    },
+    {
+      "movie_id": 112183,
+      "title": "Birdman: Or (The Unexpected Virtue of Ignorance) (2014)",
+      "score": 0.4758
+    },
+    {
+      "movie_id": 40278,
+      "title": "Jarhead (2005)",
+      "score": 0.4681
+    },
+    {
+      "movie_id": 3252,
+      "title": "Scent of a Woman (1992)",
+      "score": 0.4645
+    },
+    {
+      "movie_id": 6874,
+      "title": "Kill Bill: Vol. 1 (2003)",
+      "score": 0.4579
+    },
+    {
+      "movie_id": 106782,
+      "title": "Wolf of Wall Street, The (2013)",
+      "score": 0.4538
+    },
+    {
+      "movie_id": 1347,
+      "title": "Nightmare on Elm Street, A (1984)",
+      "score": 0.4529
+    },
+    {
+      "movie_id": 27773,
+      "title": "Old Boy (2003)",
+      "score": 0.4441
+    },
+    {
+      "movie_id": 4641,
+      "title": "Ghost World (2001)",
+      "score": 0.4383
+    }
+  ],
+  "356": [
+    {
+      "movie_id": 62,
+      "title": "Mr. Holland's Opus (1995)",
+      "score": 0.5548
+    },
+    {
+      "movie_id": 3101,
+      "title": "Fatal Attraction (1987)",
+      "score": 0.4954
+    },
+    {
+      "movie_id": 2795,
+      "title": "National Lampoon's Vacation (1983)",
+      "score": 0.4719
+    },
+    {
+      "movie_id": 111362,
+      "title": "X-Men: Days of Future Past (2014)",
+      "score": 0.4691
+    },
+    {
+      "movie_id": 80549,
+      "title": "Easy A (2010)",
+      "score": 0.467
+    },
+    {
+      "movie_id": 2335,
+      "title": "Waterboy, The (1998)",
+      "score": 0.4661
+    },
+    {
+      "movie_id": 2431,
+      "title": "Patch Adams (1998)",
+      "score": 0.4659
+    },
+    {
+      "movie_id": 97752,
+      "title": "Cloud Atlas (2012)",
+      "score": 0.4648
+    },
+    {
+      "movie_id": 48,
+      "title": "Pocahontas (1995)",
+      "score": 0.4584
+    },
+    {
+      "movie_id": 181,
+      "title": "Mighty Morphin Power Rangers: The Movie (1995)",
+      "score": 0.4583
+    }
+  ],
+  "364": [
+    {
+      "movie_id": 588,
+      "title": "Aladdin (1992)",
+      "score": 0.5485
+    },
+    {
+      "movie_id": 152081,
+      "title": "Zootopia (2016)",
+      "score": 0.5473
+    },
+    {
+      "movie_id": 112852,
+      "title": "Guardians of the Galaxy (2014)",
+      "score": 0.5011
+    },
+    {
+      "movie_id": 2375,
+      "title": "Money Pit, The (1986)",
+      "score": 0.488
+    },
+    {
+      "movie_id": 339,
+      "title": "While You Were Sleeping (1995)",
+      "score": 0.4834
+    },
+    {
+      "movie_id": 24,
+      "title": "Powder (1995)",
+      "score": 0.4809
+    },
+    {
+      "movie_id": 6333,
+      "title": "X2: X-Men United (2003)",
+      "score": 0.4776
+    },
+    {
+      "movie_id": 86332,
+      "title": "Thor (2011)",
+      "score": 0.4735
+    },
+    {
+      "movie_id": 134853,
+      "title": "Inside Out (2015)",
+      "score": 0.4631
+    },
+    {
+      "movie_id": 158,
+      "title": "Casper (1995)",
+      "score": 0.4627
+    }
+  ],
+  "2571": [
+    {
+      "movie_id": 93840,
+      "title": "Cabin in the Woods, The (2012)",
+      "score": 0.5303
+    },
+    {
+      "movie_id": 152081,
+      "title": "Zootopia (2016)",
+      "score": 0.5301
+    },
+    {
+      "movie_id": 63082,
+      "title": "Slumdog Millionaire (2008)",
+      "score": 0.5249
+    },
+    {
+      "movie_id": 103228,
+      "title": "Pacific Rim (2013)",
+      "score": 0.5179
+    },
+    {
+      "movie_id": 109487,
+      "title": "Interstellar (2014)",
+      "score": 0.5135
+    },
+    {
+      "movie_id": 97938,
+      "title": "Life of Pi (2012)",
+      "score": 0.5129
+    },
+    {
+      "movie_id": 111362,
+      "title": "X-Men: Days of Future Past (2014)",
+      "score": 0.5024
+    },
+    {
+      "movie_id": 1036,
+      "title": "Die Hard (1988)",
+      "score": 0.5019
+    },
+    {
+      "movie_id": 94777,
+      "title": "Men in Black III (M.III.B.) (M.I.B.³) (2012)",
+      "score": 0.5006
+    },
+    {
+      "movie_id": 59784,
+      "title": "Kung Fu Panda (2008)",
+      "score": 0.4991
+    }
+  ],
+  "260": [
+    {
+      "movie_id": 1196,
+      "title": "Star Wars: Episode V - The Empire Strikes Back (1980)",
+      "score": 0.7391
+    },
+    {
+      "movie_id": 1210,
+      "title": "Star Wars: Episode VI - Return of the Jedi (1983)",
+      "score": 0.6945
+    },
+    {
+      "movie_id": 6350,
+      "title": "Laputa: Castle in the Sky (Tenkû no shiro Rapyuta) (1986)",
+      "score": 0.4612
+    },
+    {
+      "movie_id": 308,
+      "title": "Three Colors: White (Trzy kolory: Bialy) (1994)",
+      "score": 0.4568
+    },
+    {
+      "movie_id": 104841,
+      "title": "Gravity (2013)",
+      "score": 0.4547
+    },
+    {
+      "movie_id": 103335,
+      "title": "Despicable Me 2 (2013)",
+      "score": 0.4517
+    },
+    {
+      "movie_id": 106916,
+      "title": "American Hustle (2013)",
+      "score": 0.4435
+    },
+    {
+      "movie_id": 93840,
+      "title": "Cabin in the Woods, The (2012)",
+      "score": 0.4415
+    },
+    {
+      "movie_id": 741,
+      "title": "Ghost in the Shell (Kôkaku kidôtai) (1995)",
+      "score": 0.4402
+    },
+    {
+      "movie_id": 457,
+      "title": "Fugitive, The (1993)",
+      "score": 0.437
+    }
+  ],
+  "318": [
+    {
+      "movie_id": 92259,
+      "title": "Intouchables (2011)",
+      "score": 0.5255
+    },
+    {
+      "movie_id": 3450,
+      "title": "Grumpy Old Men (1993)",
+      "score": 0.4789
+    },
+    {
+      "movie_id": 63992,
+      "title": "Twilight (2008)",
+      "score": 0.4777
+    },
+    {
+      "movie_id": 904,
+      "title": "Rear Window (1954)",
+      "score": 0.465
+    },
+    {
+      "movie_id": 745,
+      "title": "Wallace & Gromit: A Close Shave (1995)",
+      "score": 0.4647
+    },
+    {
+      "movie_id": 3072,
+      "title": "Moonstruck (1987)",
+      "score": 0.4523
+    },
+    {
+      "movie_id": 7285,
+      "title": "Thirteen (2003)",
+      "score": 0.4434
+    },
+    {
+      "movie_id": 342,
+      "title": "Muriel's Wedding (1994)",
+      "score": 0.4286
+    },
+    {
+      "movie_id": 2302,
+      "title": "My Cousin Vinny (1992)",
+      "score": 0.4224
+    },
+    {
+      "movie_id": 51935,
+      "title": "Shooter (2007)",
+      "score": 0.4195
+    }
+  ],
+  "2959": [
+    {
+      "movie_id": 2542,
+      "title": "Lock, Stock & Two Smoking Barrels (1998)",
+      "score": 0.612
+    },
+    {
+      "movie_id": 106782,
+      "title": "Wolf of Wall Street, The (2013)",
+      "score": 0.5748
+    },
+    {
+      "movie_id": 2324,
+      "title": "Life Is Beautiful (La Vita è bella) (1997)",
+      "score": 0.5384
+    },
+    {
+      "movie_id": 99114,
+      "title": "Django Unchained (2012)",
+      "score": 0.5364
+    },
+    {
+      "movie_id": 109487,
+      "title": "Interstellar (2014)",
+      "score": 0.5163
+    },
+    {
+      "movie_id": 296,
+      "title": "Pulp Fiction (1994)",
+      "score": 0.5111
+    },
+    {
+      "movie_id": 40278,
+      "title": "Jarhead (2005)",
+      "score": 0.5056
+    },
+    {
+      "movie_id": 1884,
+      "title": "Fear and Loathing in Las Vegas (1998)",
+      "score": 0.4866
+    },
+    {
+      "movie_id": 108932,
+      "title": "The Lego Movie (2014)",
+      "score": 0.478
+    },
+    {
+      "movie_id": 47,
+      "title": "Seven (a.k.a. Se7en) (1995)",
+      "score": 0.4708
+    }
+  ],
+  "480": [
+    {
+      "movie_id": 88744,
+      "title": "Rise of the Planet of the Apes (2011)",
+      "score": 0.603
+    },
+    {
+      "movie_id": 1907,
+      "title": "Mulan (1998)",
+      "score": 0.5718
+    },
+    {
+      "movie_id": 2000,
+      "title": "Lethal Weapon (1987)",
+      "score": 0.5255
+    },
+    {
+      "movie_id": 1302,
+      "title": "Field of Dreams (1989)",
+      "score": 0.5038
+    },
+    {
+      "movie_id": 152081,
+      "title": "Zootopia (2016)",
+      "score": 0.4989
+    },
+    {
+      "movie_id": 1909,
+      "title": "X-Files: Fight the Future, The (1998)",
+      "score": 0.4895
+    },
+    {
+      "movie_id": 59784,
+      "title": "Kung Fu Panda (2008)",
+      "score": 0.4871
+    },
+    {
+      "movie_id": 86332,
+      "title": "Thor (2011)",
+      "score": 0.484
+    },
+    {
+      "movie_id": 2046,
+      "title": "Flight of the Navigator (1986)",
+      "score": 0.4754
+    },
+    {
+      "movie_id": 104841,
+      "title": "Gravity (2013)",
+      "score": 0.4746
+    }
+  ],
+  "1270": [
+    {
+      "movie_id": 2012,
+      "title": "Back to the Future Part III (1990)",
+      "score": 0.6339
+    },
+    {
+      "movie_id": 2011,
+      "title": "Back to the Future Part II (1989)",
+      "score": 0.6025
+    },
+    {
+      "movie_id": 3868,
+      "title": "Naked Gun: From the Files of Police Squad!, The (1988)",
+      "score": 0.5242
+    },
+    {
+      "movie_id": 2797,
+      "title": "Big (1988)",
+      "score": 0.5213
+    },
+    {
+      "movie_id": 180,
+      "title": "Mallrats (1995)",
+      "score": 0.4996
+    },
+    {
+      "movie_id": 588,
+      "title": "Aladdin (1992)",
+      "score": 0.4706
+    },
+    {
+      "movie_id": 2804,
+      "title": "Christmas Story, A (1983)",
+      "score": 0.4488
+    },
+    {
+      "movie_id": 93840,
+      "title": "Cabin in the Woods, The (2012)",
+      "score": 0.4348
+    },
+    {
+      "movie_id": 4321,
+      "title": "City Slickers (1991)",
+      "score": 0.4325
+    },
+    {
+      "movie_id": 2060,
+      "title": "BASEketball (1998)",
+      "score": 0.4315
+    }
+  ]
+}

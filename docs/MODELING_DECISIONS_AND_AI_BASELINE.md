@@ -20,9 +20,9 @@ The full-import graph used for validation contains approximately 9,742 Movie nod
 
 ## AI-generated generic baseline (comparison)
 
-**Model used:** [ChatGPT]
+**Model used:** ChatGPT -6 & Claude Sonnet 5.5.
 
-**Date of generation:** 2 November 2026 (update if generated on another date).
+**Date of generation:** 2 November 2026.
 
 **Prompt (verbatim):**
 
@@ -59,11 +59,11 @@ This is the actual AI-generated baseline, reproduced without altering its nodes,
 | Design choice | Actual AI-generated baseline | Implemented MovieLens graph | Rationale |
 |---|---|---|---|
 | Node labels | `User`, `Movie`, `Genre`, `Tag` | `User`, `Movie`, `Genre` | The dataset contains free-text tags submitted by users; a separate `Tag` node is not needed for our current recommendation queries. |
-| Tagging event | `User-[:TAGGED {timestamp}]->Tag-[:TAG_OF]->Movie` | `User-[:TAGGED {tag, timestamp, tagId}]->Movie` | The actual CSV records the user, the movie, the tag text, and its timestamp. Keeping the tag on the user-to-movie interaction preserves who tagged which movie without adding a separate node and extra traversal. `tagId` is also stored in the implemented relationship. |
+| Tagging event | `User-[:TAGGED {timestamp}]->Tag-[:TAG_OF]->Movie` | `User-[:TAGGED {tag, timestamp, tagId}]->Movie` | The MovieLens CSV supplies userId, movieId, tag and timestamp. The graph also stores a `tagId` on the relationship (not a source column in the standard MovieLens Small tags.csv). Modeling the tagging interaction directly preserves attribution without introducing an extra node or traversal. |
 | Genre membership | `Movie-[:IN_GENRE]->Genre` | `Movie-[:IN_GENRE]->Genre` | This is a **similarity**, not a difference: both use reusable Genre nodes. Our implementation also has unique-identity constraints for genres. |
 | Rating interaction | `User-[:RATED {rating, timestamp}]->Movie` | `User-[:RATED {rating, timestamp}]->Movie` | Another **similarity**: rating value and time correctly belong to the interaction. Our ETL additionally uses stable source IDs and constraints. |
 | Identity and indexes | Not specified in the baseline diagram | Unique keys/constraints for `Movie.movieId`, `User.userId`, and `Genre.name` | These make imports idempotent and support efficient indexed lookups. We should not claim the generic baseline explicitly rejected indexes; it simply did not specify them. |
-| Derived movie statistics | Not specified in the baseline diagram | `Movie.ratingCount` and `Movie.averageRating` derived from `RATED` | Cached statistics speed up Trending queries. They are derived values, not new source facts, and must be refreshed if ratings change. |
+| Derived movie statistics | Not specified in the baseline diagram | `Movie.ratingCount` and `Movie.averageRating` (derived from ratings) | These are derived from `RATED`, not new source facts. The optimization caches them for faster Trending queries, with a fallback for older imports. They must be refreshed when ratings change. |
 
 The key design difference is the handling of tags. The AI baseline chooses an independent `Tag` node plus `TAG_OF`; our graph represents tagging directly as a **user–movie relationship** with properties. Both choices can be valid, but the latter more closely matches the supplied MovieLens interaction records and our query requirements. We retain and openly acknowledge the similarities in the two models.
 
@@ -78,7 +78,7 @@ The key design difference is the handling of tags. The AI baseline chooses an in
 
 1. The graph includes only provided MovieLens entities. Richer metadata (cast, directors, descriptions) would require another documented source and a schema migration.
 2. Tags are kept as relationship properties; this preserves attribution but is less convenient for global tag-to-tag analysis. A future normalized Tag node is possible if that use case is justified.
-3. Precomputed counts and averages are a deliberate denormalization for a static dataset. If the API supports adding ratings later, those values must be updated consistently.
+3. Cached counts and averages are a deliberate denormalization for the static MovieLens dataset. If the API supports adding ratings later, the values must be updated consistently.
 4. Node Similarity and PageRank are not the same as semantic/content similarity. A recommendation explanation must identify which evidence it actually uses.
 5. Reproducibility requires documenting import steps, schema constraints, indexes and the rationale above rather than accepting a generic generated diagram as the final design.
 
