@@ -17,7 +17,8 @@ from urllib.request import Request, urlopen
 ASK = "/api/agent/ask"
 EXPLAIN = "/api/agent/explain"
 
-# (id, endpoint, question or explain params, expected HTTP code, what is checked)
+# (id, endpoint, question or explain params, expected HTTP code(s), what is checked)
+# Cases marked "empty" must return no record when they answer 200: nothing may be invented.
 CASES = [
     ("A1", ASK, "Show me 5 comedy movies", 200, "Genre question"),
     ("A2", ASK, "What are the 10 most popular movies?", 200, "Popularity question"),
@@ -36,7 +37,8 @@ CASES = [
     ("R6", EXPLAIN, {"source_movie_id": 1, "recommended_movie_id": 999999}, 404, "Unknown movie"),
     ("R7", EXPLAIN, {"source_movie_id": 0, "recommended_movie_id": 2}, 422, "Invalid movie ID"),
     ("R8", ASK, "Find movies similar to movie 999999", 200, "Non-existent movie: empty, nothing invented"),
-    ("R9", ASK, "Show me 5 Bollywood movies", 200, "Non-existent genre: empty, nothing invented"),
+    ("R9", ASK, "Show me 5 Bollywood movies", (200, 422),
+     "Non-existent genre: empty answer or refusal, nothing invented"),
 ]
 
 
@@ -81,7 +83,11 @@ def run_case(api: str, case: tuple) -> tuple[bool, str]:
         status, data = call(api, endpoint, payload)
     except (URLError, TimeoutError, OSError) as error:
         raise SystemExit(f"Cannot reach {api}: is Docker running? ({error})") from error
-    ok = status == expected
+    allowed = expected if isinstance(expected, tuple) else (expected,)
+    ok = status in allowed
+    if ok and status == 200 and "empty" in purpose and isinstance(data, dict):
+        ok = data.get("evidence_count") == 0
+    expected = " or ".join(map(str, allowed))
     understood, observed = summarize(endpoint, data)
     shown = payload if isinstance(payload, str) else urlencode(payload)
     print(f"{case_id}: HTTP {status} (expected {expected}) {'OK' if ok else 'FAILED'}")

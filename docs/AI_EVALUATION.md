@@ -105,8 +105,8 @@ The script sends each question to the API through Nginx (`http://localhost:8080`
 | R5 | Explain why these two movies are similar | 422 | Grounding check: the model's movie is not in the question (see below) |
 | R6 | `/explain` 1 → 999999 | 404 | Movie not found in Neo4j |
 | R7 | `/explain` 0 → 2 | 422 | FastAPI validation: IDs must be > 0 |
-| R8 | Find movies similar to movie 999999 | 200, empty | Valid question, no such movie: nothing invented |
-| R9 | Show me 5 Bollywood movies | 200, empty | Genre does not exist: nothing invented |
+| R8 | Find movies similar to movie 999999 | 200, empty | Valid question, no such movie: nothing invented (a 200 with records would fail the check) |
+| R9 | Show me 5 Bollywood movies | 200 (empty) or 422 | Genre does not exist: either an empty answer or a refusal, never invented movies |
 
 The model can never modify the database: Neo4j queries run in **read transactions** (`execute_read`), only allow-listed templates can execute, and every value is bound as a parameter.
 
