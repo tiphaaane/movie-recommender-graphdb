@@ -18,26 +18,26 @@ inventing gains.
 Reproduce from a fresh database, from the repository root, with the standard project setup:
 
 ```bash
-# 1. Start the project's Neo4j service and import MovieLens (data in data/ml-latest-small/)
+# 1. Start the project's Neo4j service and import MovieLens (data in data/ml-latest-small/).
+#    Since the optimization was integrated, the import also creates the rating statistics.
 docker compose up -d neo4j
 python -m scripts.import_movielens
 python -m scripts.verify_graph
 
-# 2. Baseline: the current application queries
-#    (the optimized variant is skipped because its properties do not exist yet)
+# 2. Baseline: remove the statistics, then measure
+#    (the optimized variant is skipped because its properties do not exist)
+python -m scripts.setup_rating_stats --drop
 python -m scripts.benchmark_queries --label before
 
-# 3. Apply the tested optimization (section 4), then measure again
+# 3. Recreate the statistics (section 4), then measure again
 python -m scripts.setup_rating_stats
 python -m scripts.benchmark_queries --label after
-
-# Optional: remove the optimization to return to the baseline graph
-python -m scripts.setup_rating_stats --drop
 ```
 
-`--label` only names the report. The optimization is created by
-`scripts/setup_rating_stats.py`, which is idempotent and checks that the optimized query
-returns exactly the same rows as the current API query before the "after" run.
+`--label` only names the report. `scripts/setup_rating_stats.py` is idempotent and checks
+that the optimized query returns exactly the same rows as the aggregation query. In the
+benchmark reports, `api_trending` is the trending query as it was before the optimization,
+kept as the baseline.
 
 Raw reports: `docs/benchmarks/results_before.md` and `docs/benchmarks/results_after.md`.
 
@@ -81,18 +81,20 @@ every movie those users rated. `api_user_recommendations` and `api_discover`
 movies before keeping the 30 closest. These are the most expensive queries of the application.
 Their cost comes from the number of paths, not from a missing index.
 
-## 4. Optimization tested: precomputed rating statistics
+## 4. Optimization integrated: precomputed rating statistics
 
 Idea: store `ratingCount` and `averageRating` on each `Movie` once, and index `ratingCount`,
 instead of recomputing them from all ratings at every request (denormalization).
 
-The setup is scripted in `scripts/setup_rating_stats.py` (`--drop` removes it). It runs:
+The import runs this automatically (`create_stats` in `scripts/setup_rating_stats.py`; `--drop` removes it):
 
 ```cypher
 MATCH (m:Movie)
 OPTIONAL MATCH (m)<-[r:RATED]-(:User)
-WITH m, count(r) AS rating_count, avg(r.rating) AS average_rating
-SET m.ratingCount = rating_count, m.averageRating = average_rating;
+WITH m, count(r) AS rating_count, sum(r.rating) AS rating_sum
+SET m.ratingCount = rating_count,
+    m.averageRating = CASE WHEN rating_count = 0 THEN null
+                           ELSE rating_sum / rating_count END;
 
 CREATE INDEX movie_rating_count_index IF NOT EXISTS FOR (m:Movie) ON (m.ratingCount);
 ```
@@ -107,7 +109,9 @@ Same run (`results_after.md`):
 - Database hits divided by about 7,000; median time divided by about 15.
 - Correctness: both queries return the same rows in the same order with the same values. This is checked automatically by `scripts/setup_rating_stats.py` (first 50 rows) and shown in `docs/screenshots/trending_current.png` and `trending_precomputed.png`.
 - Trade-off: the two properties must be recomputed when ratings change. MovieLens Small is static here, so recomputing them at import time is enough.
-- Status: proposal. Adopting it in production needs the precomputation in the import pipeline and a query change in the API (`trending`) and the AI templates (`popular_movies`), to be agreed with Tiphaine and Apolline.
+- Status: integrated in the application. `scripts/import_movielens.py` now computes the statistics and creates the index at the end of every import, and the API `trending` query (`app/services/neo4j_recommendations.py`) reads them. On a database imported before this change, the API falls back to the previous aggregation (same results, slower) and logs a warning. The AI assistant's `popular_movies` template is unchanged, pending coordination with Apolline.
+- Rounding issue found by the non-regression test: on the first 100 rows, Stargate (140 ratings, exact average 472.5 / 140 = 3.375) was shown as 3.37 by the precomputed query and 3.38 by the aggregation. `avg()` accumulates in reading order, so an exact x.xx5 average can land just below or just above the rounding boundary. Both the stored average and the API fallback now use `sum / count`, which is exact for MovieLens half-star ratings, so the two queries always agree.
+- Non-regression: `tests/test_rating_stats.py` (runs in CI, no database) checks that the API uses the precomputed query, falls back when statistics are missing, keeps the same response columns and order, and that the import computes the statistics. `tests/test_rating_stats_live.py` (needs a local imported database, skipped in CI) checks identical results on the real data (limits 10 and 100), that every `ratingCount` equals the real number of ratings, that unrated movies get `ratingCount = 0`, and that recomputing the statistics leaves the graph unchanged.
 
 ## 5. Variant tested without gain: exact genre name
 
