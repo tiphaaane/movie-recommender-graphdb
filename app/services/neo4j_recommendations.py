@@ -1,8 +1,11 @@
 """Read-only, parameterized Neo4j recommendation queries for MovieLens."""
 
+import logging
 from typing import Any
 
 from app.services.neo4j_service import get_driver
+
+LOGGER = logging.getLogger(__name__)
 
 
 def read_cypher(query: str, parameters: dict[str, Any]) -> list[dict[str, Any]]:
@@ -31,20 +34,45 @@ def user_exists(user_id: int) -> bool:
     return bool(rows)
 
 
+# Reads ratingCount / averageRating, precomputed at import time by
+# scripts/import_movielens.py (see docs/QUERY_BENCHMARKS_JULIETTE.md, section 4).
+TRENDING_QUERY = """
+    MATCH (m:Movie)
+    WHERE m.ratingCount >= 3
+    RETURN m.movieId AS movie_id, m.title AS title,
+           m.ratingCount AS rating_count, round(m.averageRating, 2) AS average_rating
+    ORDER BY rating_count DESC, average_rating DESC, movie_id ASC
+    LIMIT $limit
+    """
+
+# Previous query, aggregating every rating at each call. Only used when the database was
+# imported before the statistics existed. The average is sum / count, like the stored one:
+# avg() depends on the reading order and could round an exact x.xx5 average differently.
+TRENDING_FALLBACK_QUERY = """
+    MATCH (m:Movie)<-[r:RATED]-(:User)
+    WITH m, count(r) AS rating_count, sum(r.rating) / count(r) AS average_rating
+    WHERE rating_count >= 3
+    RETURN m.movieId AS movie_id, m.title AS title,
+           rating_count, round(average_rating, 2) AS average_rating
+    ORDER BY rating_count DESC, average_rating DESC, movie_id ASC
+    LIMIT $limit
+    """
+
+
 def trending(limit: int) -> list[dict[str, Any]]:
-    """Rank movies by all-time number of ratings, not recent activity."""
-    return read_cypher(
-        """
-        MATCH (m:Movie)<-[r:RATED]-(:User)
-        WITH m, count(r) AS rating_count, avg(r.rating) AS average_rating
-        WHERE rating_count >= 3
-        RETURN m.movieId AS movie_id, m.title AS title,
-               rating_count, round(average_rating, 2) AS average_rating
-        ORDER BY rating_count DESC, average_rating DESC, movie_id ASC
-        LIMIT $limit
-        """,
-        {"limit": limit},
+    """Rank movies by all-time number of ratings, not recent activity.
+
+    Uses the precomputed rating statistics (about 44 database hits instead of about
+    309,000). If they are missing, falls back to the aggregation, with the same results.
+    """
+    rows = read_cypher(TRENDING_QUERY, {"limit": limit})
+    if rows:
+        return rows
+    LOGGER.warning(
+        "No precomputed rating statistics found: using the slower aggregation. "
+        "Re-import MovieLens or run python -m scripts.setup_rating_stats."
     )
+    return read_cypher(TRENDING_FALLBACK_QUERY, {"limit": limit})
 
 
 def similar_movies(movie_id: int, limit: int) -> list[dict[str, Any]]:

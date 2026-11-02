@@ -1,5 +1,8 @@
 """Idempotent, parameterized bulk import from MovieLens Small into Neo4j 5.
 
+After loading the graph, the import also stores ratingCount and averageRating on every
+movie and indexes ratingCount (used by the API trending query), so no extra step is needed.
+
 Run from the repository root:
 python -m scripts.import_movielens --data-dir data/ml-latest-small --limit-ratings 1000
 python -m scripts.import_movielens --data-dir data/ml-latest-small
@@ -13,6 +16,7 @@ from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
 from scripts.movielens_io import batches, movie_rows, rating_rows, tag_rows
+from scripts.setup_rating_stats import create_stats
 
 SCHEMA_QUERIES = [
     "CREATE CONSTRAINT movie_id_unique IF NOT EXISTS FOR (m:Movie) REQUIRE m.movieId IS UNIQUE",
@@ -81,6 +85,7 @@ def import_dataset(data_dir: Path, batch_size: int, limit_ratings: int | None) -
             for group in batches(rows, batch_size):
                 driver.execute_query(query, parameters_={"rows": group}, database_="neo4j")
             print(f"Imported {len(rows)} {label} source rows")
+        create_stats(driver, "neo4j")
     return {"movies": len(movies), "genres": len(genres), "ratings": len(ratings), "tags": len(tags)}
 
 

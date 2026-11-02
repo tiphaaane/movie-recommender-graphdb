@@ -1,12 +1,14 @@
-"""Create or remove the precomputed rating statistics used by the optimized trending query.
+"""Create or remove the precomputed rating statistics used by the trending query.
 
-Run from the repository root, after importing MovieLens:
+The MovieLens import (scripts/import_movielens.py) calls create_stats automatically.
+Use this script for a database imported before that change, or to remove the statistics
+when measuring the baseline benchmark:
     python -m scripts.setup_rating_stats          # create properties and index, then check
     python -m scripts.setup_rating_stats --drop   # remove them (back to the baseline graph)
 
 The setup is idempotent: running it twice gives the same graph. After creating the
 statistics, the script checks that the optimized query returns exactly the same rows
-as the current API query (api_trending) and fails otherwise.
+as the aggregation query (api_trending in the benchmarks) and fails otherwise.
 """
 
 import argparse
@@ -15,11 +17,16 @@ from scripts.benchmark_queries import QUERIES, connect
 
 INDEX_NAME = "movie_rating_count_index"
 
+# sum / count instead of avg(): MovieLens ratings are half stars, so the sum is exact and
+# the average no longer depends on the order in which ratings are read. With avg(), an
+# exact x.xx5 average (Stargate: 472.5 / 140 = 3.375) could be rounded to 3.37 or 3.38.
 COMPUTE_QUERY = """
 MATCH (m:Movie)
 OPTIONAL MATCH (m)<-[r:RATED]-(:User)
-WITH m, count(r) AS rating_count, avg(r.rating) AS average_rating
-SET m.ratingCount = rating_count, m.averageRating = average_rating
+WITH m, count(r) AS rating_count, sum(r.rating) AS rating_sum
+SET m.ratingCount = rating_count,
+    m.averageRating = CASE WHEN rating_count = 0 THEN null
+                           ELSE rating_sum / rating_count END
 RETURN count(m) AS movies
 """
 
